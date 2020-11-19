@@ -11,10 +11,11 @@ class App extends Component {
   };
 
   componentDidMount() {
-    const cookie = getCookie('favoriteCreature');
-    this.setState({
-      favoriteCreature: cookie,
-    });
+    // const cookie = getCookie('favoriteCreature');
+    // this.setState({
+    //   favoriteCreature: cookie,
+    // });
+    this.getCreature();
   }
 
   // tracking what the user enters into the form field
@@ -29,14 +30,47 @@ class App extends Component {
     const creature = this.state.enteredCreature;
 
     // call to store cookie
-    setCookie('favoriteCreature', creature);
-    setCookie('random', 'OhMy');
+    // setCookie('favoriteCreature', creature);
+    // setCookie('random', 'OhMy');
+
+    this.postCreature(creature);
 
     this.setState({
       enteredCreature: '',
       favoriteCreature: creature,
     });
   };
+
+  // API Calls
+
+  getCreature() {
+    axios
+      .get('/api/creature')
+      .then((response) => {
+        // const { favoriteCreature} = response.data;
+        this.setState({
+          ...response.data,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        alert('Something terrible happened');
+      });
+  }
+
+  postCreature(cookieValue) {
+    axios
+      .post('/api/creature', {
+        favoriteCreature: cookieValue,
+      })
+      .then((response) => {
+        this.getCreature();
+      })
+      .catch((err) => {
+        console.log(err);
+        alert('Something went wrong');
+      });
+  }
 
   // React renders the content to the application view
   render() {
